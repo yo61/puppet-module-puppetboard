@@ -25,7 +25,7 @@ describe 'puppetboard class' do
     end
 
     it 'should not answer to localhost' do
-      shell("/usr/bin/curl localhost:80", :acceptable_error_codes => 7) do |r|
+      shell("/usr/bin/curl localhost:80", :acceptable_exit_codes => 7) do |r|
         r.exit_code.should == 7 # curl (7): Couldn't connect to host
       end
     end
