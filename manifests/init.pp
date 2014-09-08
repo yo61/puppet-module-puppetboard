@@ -17,6 +17,12 @@
 #   (string) Puppetboard system group.
 #   Defaults to 'puppetboard' ($::puppetboard::params::group)
 #
+# [*groups*]
+#   (string) The groups to which the user belongs. The primary group should
+#   not be listed, and groups should be identified by name rather than by GID.
+#   Multiple groups should be specified as an array.
+#   Defaults to undef ($::puppetboard::params::groups)
+#
 # [*basedir*]
 #   (string) Base directory where to build puppetboard vcsrepo and python virtualenv.
 #   Defaults to '/srv/puppetboard' ($::puppetboard::params::basedir)
@@ -37,9 +43,9 @@
 #   (string, absolute path) path to PuppetMaster/CA signed client SSL key
 #   Defaults to 'None' ($::puppetboard::params::puppetdb_key)
 #
-# [*puppetdb_ssl*]
-#   (string) whether PuppetDB uses SSL or not,  'True' or 'False'.
-#   Defaults to 'False' ($::puppetboard::params::puppetdb_ssl)
+# [*puppetdb_ssl_verify*]
+#   (string) whether PuppetDB uses SSL or not,  'True' or 'False', or the path to the puppet CA
+#   Defaults to 'False' ($::puppetboard::params::puppetdb_ssl_verify)
 #
 # [*puppetdb_cert*]
 #   (string, absolute path) path to PuppetMaster/CA signed client SSL cert
@@ -124,6 +130,7 @@
 class puppetboard(
   $user                = $::puppetboard::params::user,
   $group               = $::puppetboard::params::group,
+  $groups              = $::puppetboard::params::groups,
   $basedir             = $::puppetboard::params::basedir,
   $git_source          = $::puppetboard::params::git_source,
   $dev_listen_host     = $::puppetboard::params::dev_listen_host,
@@ -131,7 +138,7 @@ class puppetboard(
   $puppetdb_host       = $::puppetboard::params::puppetdb_host,
   $puppetdb_port       = $::puppetboard::params::puppetdb_port,
   $puppetdb_key        = $::puppetboard::params::puppetdb_key,
-  $puppetdb_ssl        = $::puppetboard::params::puppetdb_ssl,
+  $puppetdb_ssl_verify = $::puppetboard::params::puppetdb_ssl_verify,
   $puppetdb_cert       = $::puppetboard::params::puppetdb_cert,
   $puppetdb_timeout    = $::puppetboard::params::puppetdb_timeout,
   $unresponsive        = $::puppetboard::params::unresponsive,
@@ -166,6 +173,7 @@ class puppetboard(
       managehome => true,
       gid        => $group,
       system     => true,
+      groups     => $groups,
       require    => Group[$group],
     }
   }
