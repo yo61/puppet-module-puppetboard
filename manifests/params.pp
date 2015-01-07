@@ -15,6 +15,7 @@ class puppetboard::params {
       $apache_confd   = '/etc/httpd/conf.d'
       $apache_service = 'httpd'
     }
+    default: { fail("The ${::osfamily} operating system is not supported with the puppetboard module") }
   }
 
   $user  = 'puppetboard'
@@ -40,4 +41,6 @@ class puppetboard::params {
   $experimental = false
   $revision = undef
   $virtualenv = 'python-virtualenv'
+  $listen = 'private'
+  $extra_settings = {}
 }

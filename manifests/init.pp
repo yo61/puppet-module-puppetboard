@@ -114,6 +114,14 @@
 #   (int) This is the number of reports that we want the dashboard to display.
 #   Defaults to 10
 #
+# [*listen*]
+#   (string) Defaults to 'private' If set to 'public' puppetboard will listen
+#   on 0.0.0.0; otherwise it will only be accessible via localhost.
+#
+# [*extra_settings*]
+#   (hash) Defaults to an empty hash '{}'. Used to pass in arbitrary key/value
+#   pairs that are added to settings.py
+#
 # === Examples
 #
 #  class { 'puppetboard':
@@ -154,11 +162,13 @@ class puppetboard(
   $manage_git          = false,
   $manage_virtualenv   = false,
   $reports_count       = $::puppetboard::params::reports_count,
-
+  $listen              = $::puppetboard::params::listen,
+  $extra_settings      = $::puppetboard::params::extra_settings,
 ) inherits ::puppetboard::params {
   validate_bool($enable_query)
   validate_bool($experimental)
   validate_bool($localise_timestamp)
+  validate_hash($extra_settings)
 
   if $manage_group {
     group { $group:
@@ -179,10 +189,10 @@ class puppetboard(
   }
 
   file { $basedir:
-    ensure   => 'directory',
-    owner    => $user,
-    group    => $group,
-    mode     => '0755',
+    ensure => 'directory',
+    owner  => $user,
+    group  => $group,
+    mode   => '0755',
   }
 
   vcsrepo { "${basedir}/puppetboard":
@@ -213,6 +223,7 @@ class puppetboard(
   #$puppetdb_ssl_verify
   #$puppetdb_timeout
   #$unresponsive
+  #$extra_settings
   file {"${basedir}/puppetboard/settings.py":
     ensure  => 'file',
     group   => $group,
